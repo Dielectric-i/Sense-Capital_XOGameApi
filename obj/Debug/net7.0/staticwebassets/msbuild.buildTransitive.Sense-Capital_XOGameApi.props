@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\Sense-Capital_XOGameApi.props" />
+</Project>
