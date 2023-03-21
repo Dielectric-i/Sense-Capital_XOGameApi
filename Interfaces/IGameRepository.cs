@@ -17,6 +17,6 @@ namespace Sense_Capital_XOGameApi.Interfaces
         Task DeleteAsync(int id);
 
         //Update game by Id
-        Task<Game> UpdateAsync(int id);
+        Task<Game> UpdateAsync(Game game);
     }
 }

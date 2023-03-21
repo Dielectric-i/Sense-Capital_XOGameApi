@@ -8,16 +8,16 @@ namespace Sense_Capital_XOGameApi.Interfaces
         Task<Move> CreateMoveAsync(Move Move);
         
         // Get Move by id
-        Task<Move> GetByIdAsync(int id);
+        //Task<Move> GetByIdAsync(int id);
 
         // Get Move by Game Id
-        Task<IEnumerable<Move>> GetByGameIdAsync(int gameId);
+        //Task<IEnumerable<Move>> GetByGameIdAsync(int gameId);
 
         // Get Move by Player Id
-        Task<IEnumerable<Move>> GetByPlayerIdAsync(int PlayerId);
+        //Task<IEnumerable<Move>> GetByPlayerIdAsync(int PlayerId);
 
         //Delete Move by Id
-        Task DeleteMoveByIdAsync(int id);
+        //Task DeleteMoveByIdAsync(int id);
 
         //Update Move by Id
         //Task<Move> UpdateMoveById(int id);

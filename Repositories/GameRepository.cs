@@ -52,10 +52,11 @@ namespace Sense_Capital_XOGameApi.Repositories
                 await _context.SaveChangesAsync();
         }
 
-        public async Task<Game> UpdateAsync(int id)
+        public async Task<Game> UpdateAsync(Game game)
         {
-                var game = await GetGameAsync(id);
+                //var game = await GetGameAsync(id);
                 _context.Games.Update(game);
+                _context.SaveChanges();
                 return game;
         }
     }

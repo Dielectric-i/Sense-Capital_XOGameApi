@@ -68,7 +68,7 @@
              <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
              <response code="500">if there was an internal server error.</response>
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.MakeMove(Sense_Capital_XOGameApi.Models.Move)">
+        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.MakeMove(Sense_Capital_XOGameApi.RequestModels.RqstMakeMove)">
              <summary>
              Make a move in a game
              </summary>
@@ -92,52 +92,16 @@
              <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
              <response code="500">if there was an internal server error.</response>
         </member>
-        <member name="T:Sense_Capital_XOGameApi.Migrations.InitialC">
+        <member name="T:Sense_Capital_XOGameApi.Migrations.change1">
             <inheritdoc />
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.InitialC.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:Sense_Capital_XOGameApi.Migrations.change1.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.InitialC.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:Sense_Capital_XOGameApi.Migrations.change1.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.InitialC.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Sense_Capital_XOGameApi.Migrations.addGameToMove">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.addGameToMove.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.addGameToMove.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.addGameToMove.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Sense_Capital_XOGameApi.Migrations.changeGamePlayerField">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.changeGamePlayerField.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.changeGamePlayerField.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.changeGamePlayerField.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="T:Sense_Capital_XOGameApi.Migrations.AddMoveCtor">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.AddMoveCtor.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.AddMoveCtor.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Migrations.AddMoveCtor.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:Sense_Capital_XOGameApi.Migrations.change1.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Interfaces;
 using Sense_Capital_XOGameApi.Models;
+using Sense_Capital_XOGameApi.Repositories;
 using Sense_Capital_XOGameApi.RequestModels;
+using System.Text.Json;
 
 namespace Sense_Capital_XOGameApi.Services
 {
@@ -10,11 +13,13 @@ namespace Sense_Capital_XOGameApi.Services
     {
         public readonly IGameRepository _gameRepository;
         public readonly IPlayerRepository _playerRepository;
+        public readonly IMoveRepository _moveRepository;
 
-        public GameService(IGameRepository gameRepository, IPlayerRepository playerRepository)
+        public GameService(IGameRepository gameRepository, IPlayerRepository playerRepository, IMoveRepository moveRepository)
         {
             _gameRepository = gameRepository;
             _playerRepository = playerRepository;
+            _moveRepository = moveRepository;
         }
 
         public async Task<ActionResult<Game>> CreateGameAsync(string player1Name, string player2Name)
@@ -44,8 +49,8 @@ namespace Sense_Capital_XOGameApi.Services
                 Game newGame = new Game { Player1 = newPlayer1, Player2 = newPlayer2, CurrentPlayerId = newPlayer1.Id };
                 await _gameRepository.CreateGameAsync(newGame);
 
-                //return newGame;
-                return new CreatedAtActionResult("GetGame", "Game", new { id = newGame.Id }, newGame);
+                return new CreatedResult($"api/Game/{newGame.Id}", newGame);
+
             }
             catch (Exception ex)
             {
@@ -158,22 +163,22 @@ namespace Sense_Capital_XOGameApi.Services
                 await PutPlayersToGame(game);
 
                 // Проверка закончена игра или нет
-                if (game.WinnerName != null)
+                if (game.WinnerId != null)
                 {
                     var problemDetails = new ProblemDetails
                     {
                         Status = 400,
                         Title = "The game is already finished.",
-                        Detail = "Winner Name: " + game.WinnerName
+                        Detail = "Winner Id: " + game.WinnerId
                     };
 
                     return new ObjectResult(problemDetails);
                 }
 
-                // Проверка правильный ли грок ходит
+                // Проверка правильный ли игрок ходит
                 if (game.CurrentPlayerId != rqstMakeMove.PlayerId)
                 {
-                    Problem(
+                    return Problem(
                         400, 
                         "It's not your turn.", 
                         "Current Player Id: " + game.CurrentPlayerId);
@@ -182,21 +187,18 @@ namespace Sense_Capital_XOGameApi.Services
                 // Проверка возможности хода
                 if (rqstMakeMove.Row < 0 || rqstMakeMove.Row > 2 || rqstMakeMove.Column < 0 || rqstMakeMove.Column > 2)
                 {
-                    Problem(
+                    return Problem(
                         400,
                         "Invalid move.",
                         "Move out of bounds");
                 }
                 if (game.BoardState[rqstMakeMove.Row * 3 + rqstMakeMove.Column] != '-')
                 {
-                    Problem(
+                    return Problem(
                         400,
                         "This cell is already occupied.",
                         "Try another cell");
                 }
-                
-                // Здесь положить move в бд
-               // var move = await 
 
                 // Заполнение ячейки
                 var playerSymbol = rqstMakeMove.PlayerId == game.Player1.Id ? game.Player1Symbol : game.Player2Symbol;
@@ -208,20 +210,30 @@ namespace Sense_Capital_XOGameApi.Services
                 var result = CheckResult(game.BoardState);
                 if (result != null)
                 {
-                    game.WinnerName = result == "Draw" ? null : move.Player.Name;
+                    game.WinnerId = result == "Draw" ? null : rqstMakeMove.PlayerId;
                 }
                 else
                 {
                     // Переключение игрока
-                    game.CurrentPlayerId = game.Player1.Id == move.Player.Id ? game.Player1.Id : game.Player2.Id;
+                    game.CurrentPlayerId = game.Player1.Id == rqstMakeMove.PlayerId ? game.Player2.Id : game.Player1.Id;
                 }
 
-                // Добавляем ход в игру
-                game.Moves.Add(move);
-
                 // Обновление игры в бд
-                await _gameRepository.UpdateAsync(game.Id);
-                return game;
+                //await _gameRepository.UpdateAsync(game);
+
+                // Добавляем Game в Move и сохраняем все в бд
+                var move = new Move
+                {
+                    Row = rqstMakeMove.Row,
+                    Column = rqstMakeMove.Column,
+                    PlayerId = rqstMakeMove.PlayerId,
+                    //GameId = rqstMakeMove.GameId,
+                    Game = game,
+                };
+                await _moveRepository.CreateMoveAsync(move);
+
+                return new CreatedAtActionResult("GetGame", "Game", new { id = game.Id }, game);
+                //return game;
             }
             catch (Exception ex)
             {

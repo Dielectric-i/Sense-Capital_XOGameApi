@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApiContext>(options => options.UseMySQL(
     ));
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<IMoveRepository, MoveRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

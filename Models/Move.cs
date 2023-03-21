@@ -1,12 +1,10 @@
-﻿namespace Sense_Capital_XOGameApi.Models
+﻿using System.Runtime.Serialization;
+
+namespace Sense_Capital_XOGameApi.Models
 {
+    [DataContract(IsReference = true)]
     public class Move
     {
-        public Move()
-        {
-            Player= new Player();
-            Game= new Game();
-        }
         public int Id { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }

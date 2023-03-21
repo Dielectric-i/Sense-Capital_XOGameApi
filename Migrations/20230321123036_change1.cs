@@ -6,7 +6,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Sense_Capital_XOGameApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialC : Migration
+    public partial class change1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,7 +37,7 @@ namespace Sense_Capital_XOGameApi.Migrations
                     Player1Symbol = table.Column<string>(type: "longtext", nullable: false),
                     Player2Symbol = table.Column<string>(type: "longtext", nullable: false),
                     CurrentPlayerId = table.Column<int>(type: "int", nullable: false),
-                    WinnerName = table.Column<string>(type: "longtext", nullable: true),
+                    WinnerId = table.Column<int>(type: "int", nullable: true),
                     BoardState = table.Column<string>(type: "longtext", nullable: false),
                     Player1Id = table.Column<int>(type: "int", nullable: false),
                     Player2Id = table.Column<int>(type: "int", nullable: false)
