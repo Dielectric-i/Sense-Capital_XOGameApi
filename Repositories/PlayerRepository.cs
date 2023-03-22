@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Sense_Capital_XOGameApi.Data;
 using Sense_Capital_XOGameApi.Interfaces;
 using Sense_Capital_XOGameApi.Models;
@@ -30,11 +29,14 @@ namespace Sense_Capital_XOGameApi.Repositories
         // Get Player by id
         public async Task<Player> GetById(int id)
         {
-            var player = await _context.Players.FindAsync(id);
-            if (player == null)
+
+            if (!int.TryParse(id.ToString(), out int parsedId))
             {
-                throw new ArgumentException($"Player with id {id} not found.");
+                throw new ArgumentException($"Invalid player id: {id}");
             }
+
+            var player = await _context.Players.FindAsync(id);
+
             return player;
         }
 

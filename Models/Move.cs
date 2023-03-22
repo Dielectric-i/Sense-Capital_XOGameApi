@@ -1,8 +1,9 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Sense_Capital_XOGameApi.Models
 {
-    [DataContract(IsReference = true)]
+
     public class Move
     {
         public int Id { get; set; }
@@ -13,6 +14,8 @@ namespace Sense_Capital_XOGameApi.Models
         public Player Player { get; set; }
 
         public int GameId { get; set; }
+
+        [JsonIgnore]
         public Game Game { get; set; }
     }
 }

@@ -162,7 +162,7 @@ namespace Sense_Capital_XOGameApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpPost("/move")]
+        [HttpPut("move")]
         public async Task<ActionResult<Game>> MakeMove(RqstMakeMove rqstMakeMove)
         {
             try

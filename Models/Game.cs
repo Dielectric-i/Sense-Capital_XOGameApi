@@ -1,9 +1,6 @@
-﻿using System.Numerics;
-using System.Runtime.Serialization;
-
+﻿
 namespace Sense_Capital_XOGameApi.Models
 {
-    [DataContract(IsReference = true)]
     public class Game
     {
         public int Id { get; set; }

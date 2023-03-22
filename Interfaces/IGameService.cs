@@ -11,6 +11,6 @@ namespace Sense_Capital_XOGameApi.Controllers
         Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync();
         Task<ActionResult> DeleteGameAsync(int id);
         Task<ActionResult<Game>> MakeMove(RqstMakeMove rqstMakeMove);
-        Task<ActionResult<Game>> PutPlayersToGame(Game game);
+        //Task<ActionResult<Game>> PutPlayersToGame(Game game);
     }
 }

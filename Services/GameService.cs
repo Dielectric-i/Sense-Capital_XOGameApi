@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Interfaces;
@@ -6,6 +7,7 @@ using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.Repositories;
 using Sense_Capital_XOGameApi.RequestModels;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Sense_Capital_XOGameApi.Services
 {
@@ -13,6 +15,7 @@ namespace Sense_Capital_XOGameApi.Services
     {
         public readonly IGameRepository _gameRepository;
         public readonly IPlayerRepository _playerRepository;
+        private readonly ILogger _logger;
         public readonly IMoveRepository _moveRepository;
 
         public GameService(IGameRepository gameRepository, IPlayerRepository playerRepository, IMoveRepository moveRepository)
@@ -70,7 +73,7 @@ namespace Sense_Capital_XOGameApi.Services
             try
             {
                 var game = await _gameRepository.GetGameAsync(id);
-                await PutPlayersToGame(game);
+                //await PutPlayersToGame(game);
                 return game;
             }
             catch (Exception ex)
@@ -92,12 +95,16 @@ namespace Sense_Capital_XOGameApi.Services
             {
                 var games = await _gameRepository.GetAllGamesAsync();
                 if (games.Count() == 0)
+
                     return new NoContentResult();
-                foreach (var game in games)
+
+                /*foreach (var game in games)
                 {
                     await PutPlayersToGame(game);
-                }
+                }*/
+
                 return new OkObjectResult(games);
+
             }
             catch (Exception ex)
             {
@@ -133,7 +140,7 @@ namespace Sense_Capital_XOGameApi.Services
         }
 
         // Помещаем игроков из бд в игру
-        public async Task<ActionResult<Game>> PutPlayersToGame(Game game)
+        /*public async Task<ActionResult<Game>> PutPlayersToGame(Game game)
         {
             try
             {
@@ -152,7 +159,7 @@ namespace Sense_Capital_XOGameApi.Services
 
                 return new ObjectResult(problemDetails);
             }
-        }
+        }*/
 
         public async Task<ActionResult<Game>> MakeMove(RqstMakeMove rqstMakeMove)
         {
@@ -160,7 +167,7 @@ namespace Sense_Capital_XOGameApi.Services
             {
                 // Поиск игры по id
                 var game = await _gameRepository.GetGameAsync(rqstMakeMove.GameId);
-                await PutPlayersToGame(game);
+                //await PutPlayersToGame(game);
 
                 // Проверка закончена игра или нет
                 if (game.WinnerId != null)
@@ -217,7 +224,6 @@ namespace Sense_Capital_XOGameApi.Services
                     // Переключение игрока
                     game.CurrentPlayerId = game.Player1.Id == rqstMakeMove.PlayerId ? game.Player2.Id : game.Player1.Id;
                 }
-
                 // Обновление игры в бд
                 //await _gameRepository.UpdateAsync(game);
 
@@ -232,8 +238,16 @@ namespace Sense_Capital_XOGameApi.Services
                 };
                 await _moveRepository.CreateMoveAsync(move);
 
-                return new CreatedAtActionResult("GetGame", "Game", new { id = game.Id }, game);
-                //return game;
+                /*/ Сериализация game в JSON c опцией для игнорирования циклических ссылок
+                JsonSerializerOptions options = new()
+                {
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                    WriteIndented = true
+                };
+                string gameJson = JsonSerializer.Serialize(game, options);*/
+
+                //return new CreatedAtActionResult("GetGame", "Game", new { id = game.Id }, game);
+                return new OkObjectResult(game);
             }
             catch (Exception ex)
             {
