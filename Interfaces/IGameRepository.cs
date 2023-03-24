@@ -8,7 +8,7 @@ namespace Sense_Capital_XOGameApi.Interfaces
         Task<Game> CreateGameAsync(Game game);
         
         // Get game by id
-        Task<Game> GetGameAsync(int id);
+        Task<Game> GetGameByIdAsync(int id);
 
         // Get all games
         Task<IEnumerable<Game>> GetAllGamesAsync();
@@ -17,6 +17,6 @@ namespace Sense_Capital_XOGameApi.Interfaces
         Task DeleteAsync(int id);
 
         //Update game by Id
-        Task<Game> UpdateAsync(Game game);
+        Task<Game> UpdateGameAsync(Game game);
     }
 }

@@ -26,20 +26,6 @@ namespace Sense_Capital_XOGameApi.Repositories
             return Player;
         }
 
-        // Get Player by id
-        public async Task<Player> GetById(int id)
-        {
-
-            if (!int.TryParse(id.ToString(), out int parsedId))
-            {
-                throw new ArgumentException($"Invalid player id: {id}");
-            }
-
-            var player = await _context.Players.FindAsync(id);
-
-            return player;
-        }
-
         // Get Player by Name
         public async Task<Player> GetByName(string name)
         {
@@ -48,26 +34,15 @@ namespace Sense_Capital_XOGameApi.Repositories
             return player;
         }
 
-        // Get all Players
-        public async Task<IEnumerable<Player>> GetAllPlayersAsync()
+        // Checking for the existence of an player
+        public async Task<bool> isPlayerExist(int id)
         {
-            var Players = await _context.Players.ToListAsync();
-            return Players;
+            if (!int.TryParse(id.ToString(), out int parsedId))
+            {
+                throw new ArgumentException($"Invalid player id: {id}");
+            }
+            return await _context.Players.AnyAsync(p => p.Id == id);
         }
 
-        //Delete Player by Id
-        public async Task DeletePlayer(int id)
-        {
-            var Player = await GetById(id);
-            _context.Players.Remove(Player);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Player> Update(int id)
-        {
-            var Player = await GetById(id);
-            _context.Players.Update(Player);
-            return Player;
-        }
     }
 }

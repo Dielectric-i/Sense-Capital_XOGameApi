@@ -14,12 +14,12 @@
             
                  POST: api/Game
                  {
-                    "player1Name": "Игрок 1",
-                    "player2Name": "Игрок 2"
+                    "P1Name": "Игрок 1",
+                    "P2Name": "Игрок 2"
                  }
             
              </remarks>
-             <response code="201">Returns the newly created a Game</response>
+             <response code="201">Returns the newly created a game object</response>
              <response code="400">If the arguments are not correct</response>
              <response code="500">if there was an internal server error.</response>
         </member>

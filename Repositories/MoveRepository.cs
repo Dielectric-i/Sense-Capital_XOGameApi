@@ -17,9 +17,16 @@ namespace Sense_Capital_XOGameApi.Repositories
 
         public async Task<Move> CreateMoveAsync(Move move)
         {
-            await _context.Moves.AddAsync(move);
-            await _context.SaveChangesAsync();
-            return move;
+            try
+            {
+                await _context.Moves.AddAsync(move);
+                await _context.SaveChangesAsync();
+                return move;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("MoveRepository API: Error adding move: " + ex.Message);
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.RequestModels;
-using System.ComponentModel.DataAnnotations;
 
 namespace Sense_Capital_XOGameApi.Controllers
 {
@@ -11,10 +11,18 @@ namespace Sense_Capital_XOGameApi.Controllers
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
+        private readonly IValidator<RqstCreateGame> _rqstCreateGameValidator;
+        private readonly IValidator<RqstMakeMove> _rqstMakeMoveValidator;
 
-        public GameController(IGameService gameService)
+        public GameController(
+            IGameService gameService,
+            IValidator<RqstCreateGame> rqstCreateGameValidator,
+            IValidator<RqstMakeMove> rqstMakeMoveValidator
+            )
         {
             _gameService = gameService;
+            _rqstCreateGameValidator = rqstCreateGameValidator;
+            _rqstMakeMoveValidator = rqstMakeMoveValidator;
         }
 
         /// <summary>
@@ -26,28 +34,32 @@ namespace Sense_Capital_XOGameApi.Controllers
         ///
         ///     POST: api/Game
         ///     {
-        ///        "player1Name": "Игрок 1",
-        ///        "player2Name": "Игрок 2"
+        ///        "P1Name": "Игрок 1",
+        ///        "P2Name": "Игрок 2"
         ///     }
         ///
         /// </remarks>
-        /// <response code="201">Returns the newly created a Game</response>
-        /// <response code="400">If the arguments are not correct</response>
-        /// <response code="500">if there was an internal server error.</response>
+        /// <response code="201">Returns the newly created a game object</response>
+        /// <response code="400">If the request are not correct</response>
+        /// <response code="500">If there was an internal server error.</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
-        public async Task<ActionResult<Game>> CreateGameAsync([Required][FromBody] RqstCreateGame rqstCreateGame)
+        public async Task<ActionResult<Game>> CreateGameAsync([FromBody] RqstCreateGame rqstCreateGame)
         {
             try
             {
-                var game = await _gameService.CreateGameAsync(rqstCreateGame.Player1Name, rqstCreateGame.Player2Name);
+                var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
+                if (!validationResult.IsValid)
+                    return Problem(400, "Validation error occurred in the CreateGameAsync method: " + validationResult.ToString(", "));
+
+                var game = await _gameService.CreateGameAsync(rqstCreateGame);
                 return game;
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return Problem(500, "An error occurred in the CreateGameAsync method: " + ex.Message);
             }
         }
 
@@ -71,11 +83,14 @@ namespace Sense_Capital_XOGameApi.Controllers
         {
             try
             {
-                return await _gameService.GetGameAsync(id); ;
+                if (id < 0)
+                    return Problem(400, $"Validation error occurred in the GetGameAsync method: {id} is not valied");
+
+                return await _gameService.GetGameAsync(id);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
             }
         }
 
@@ -112,7 +127,7 @@ namespace Sense_Capital_XOGameApi.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
             }
         }
 
@@ -132,8 +147,19 @@ namespace Sense_Capital_XOGameApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGameAsync(int id)
         {
-            await _gameService.DeleteGameAsync(id);
-            return NoContent();
+            try
+            {
+                if (id < 0)
+                    return Problem(400, $"Validation error occurred in the DeleteGameAsync method: {id} is not valied");
+
+                await _gameService.DeleteGameAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the DeleteGameAsync method: " + ex.Message);
+            }
+
         }
 
         /// <summary>
@@ -167,12 +193,38 @@ namespace Sense_Capital_XOGameApi.Controllers
         {
             try
             {
-                return await _gameService.MakeMove(rqstMakeMove);
+                var validationResult = await _rqstMakeMoveValidator.ValidateAsync(rqstMakeMove);
+                if (!validationResult.IsValid)
+                    return Problem(400, "Validation error occurred in the MakeMove method: " + validationResult.ToString(", "));
+
+                return await _gameService.MakeMoveAsync(rqstMakeMove);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return Problem(500, "An error occurred in the MakeMoveAsync method: " + ex.Message);
             }
+        }
+
+        //
+        private ObjectResult Problem(int status, string detail)
+        {
+            try
+            {
+                var problemDetails = new ProblemDetails
+                {
+                    Status = status,
+                    Title = "GameController API:",
+                    Detail = detail
+                };
+
+                return new ObjectResult(problemDetails);
+            }
+            catch (Exception ex)
+            {
+
+                return Problem(500, "An error occurred in the Problem method: " + ex.Message);
+            }
+
         }
     }
 }
