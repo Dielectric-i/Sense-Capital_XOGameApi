@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Interfaces;
 using Sense_Capital_XOGameApi.Models;
@@ -13,42 +12,58 @@ namespace Sense_Capital_XOGameApi.Services
         public readonly IGameRepository _gameRepository;
         public readonly IPlayerRepository _playerRepository;
         public readonly IMoveRepository _moveRepository;
+        public readonly IValidator<RqstCreateGame> _rqstCreateGameValidator;
+        public readonly IValidator<RqstMakeMove> _rqstMakeMoveValidator;
 
-        public GameService(IGameRepository gameRepository, IPlayerRepository playerRepository, IMoveRepository moveRepository)
+        public GameService(
+            IGameRepository gameRepository,
+            IPlayerRepository playerRepository,
+            IMoveRepository moveRepository,
+            IValidator<RqstCreateGame> qstCreateGameValidator,
+            IValidator<RqstMakeMove> rqstMakeMoveValidator
+            )
         {
             _gameRepository = gameRepository;
             _playerRepository = playerRepository;
             _moveRepository = moveRepository;
+
+            _rqstCreateGameValidator = qstCreateGameValidator;
+            _rqstMakeMoveValidator = rqstMakeMoveValidator;
         }
 
-        public async Task<ActionResult<Game>> CreateGameAsync(string player1Name, string player2Name)
+        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame rqstCreateGame)
         {
+            var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
+            if (!validationResult.IsValid)
+                return Problem(400, "Validation error occurred in the CreateGameAsync method: " + validationResult.ToString(", "));
+
             try
             {
-                //Пробуем искать переданное имя в бд
-                var newPlayer1 = await _playerRepository.GetByName(player1Name);
+                // Пробуем искать переданное имя в бд
+                var player1 = await _playerRepository.GetByName(rqstCreateGame.P1Name);
 
-                //Если не находится, тогда берем имя, которое было переданно в запросе и создаем нового игрока
-                if (newPlayer1 == null)
+                // Если не находится, тогда берем имя, которое было передано в запросе и создаем нового игрока
+                if (player1 == null)
                 {
-                    newPlayer1 = new Player { Name = player1Name };
-                    await _playerRepository.CreatePlayerAsync(newPlayer1);
+                    player1 = new Player { Name = rqstCreateGame.P1Name };
+                    await _playerRepository.CreatePlayerAsync(player1);
                 }
 
-                var newPlayer2 = await _playerRepository.GetByName(player2Name);
-                if (newPlayer2 == null)
+                var player2 = await _playerRepository.GetByName(rqstCreateGame.P2Name);
+                if (player2 == null)
                 {
-                    newPlayer2 = new Player();
-                    newPlayer2.Name = player2Name;
-                    await _playerRepository.CreatePlayerAsync(newPlayer2);
+                    player2 = new Player();
+                    player2.Name = rqstCreateGame.P2Name;
+                    await _playerRepository.CreatePlayerAsync(player2);
                 }
+
                 // Создаем игру и сохраняем в бд
-                Game newGame = new Game() {
-                    Players = new List<Player>() { newPlayer1, newPlayer2 },
-                    CurrentPlayerId = newPlayer1.Id
+                Game newGame = new Game()
+                {
+                    Players = new List<Player>() { player1, player2 },
+                    CurrentPlayerId = player1.Id
                 };
-                //newGame.Players.AddRange(newPlayer1, newPlayer2);
-                //Game newGame = new Game { Player1 = newPlayer1, Player2 = newPlayer2, CurrentPlayerId = newPlayer1.Id };
+
                 await _gameRepository.CreateGameAsync(newGame);
 
                 return new CreatedResult($"api/Game/{newGame.Id}", newGame);
@@ -56,35 +71,22 @@ namespace Sense_Capital_XOGameApi.Services
             }
             catch (Exception ex)
             {
-                var problemDetails = new ProblemDetails
-                {
-                    Status = 500,
-                    Title = "An error occurred while creating the Game",
-                    Detail = ex.Message
-                };
-
-                return new ObjectResult(problemDetails);
+                return Problem(500, "An error occurred in the CreateGameAsync method: " + ex.Message);
             }
         }
 
-        public async Task<ActionResult<Game>> GetGameAsync(int id)
+        public async Task<ActionResult> DeleteAllGamesAsync()
         {
             try
             {
-                var game = await _gameRepository.GetGameAsync(id);
-                //await PutPlayersToGame(game);
-                return game;
+                await _gameRepository.DeleteAllGamesAsync();
+                return new NoContentResult();
+
+
             }
             catch (Exception ex)
             {
-                var problemDetails = new ProblemDetails
-                {
-                    Status = 500,
-                    Title = "An error occurred while getting a Game by id",
-                    Detail = ex.Message
-                };
-
-                return new ObjectResult(problemDetails);
+                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
             }
         }
 
@@ -94,28 +96,41 @@ namespace Sense_Capital_XOGameApi.Services
             {
                 var games = await _gameRepository.GetAllGamesAsync();
                 if (games.Count() == 0)
-
                     return new NoContentResult();
 
-                /*foreach (var game in games)
-                {
-                    await PutPlayersToGame(game);
-                }*/
-
                 return new OkObjectResult(games);
-
             }
             catch (Exception ex)
             {
-                return Problem(500,
-                    "An error occurred while getting the list of games:",
-                    ex.Message
-                    );
+                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
+            }
+        }
+
+        public async Task<ActionResult<Game>> GetGameAsync(int id)
+        {
+            if (id < 0)
+                return Problem(400, $"Validation error occurred in the GetGameAsync method: {id} is not valied");
+
+            try
+            {
+                var game = await _gameRepository.GetGameByIdAsync(id);
+                if (game == null)
+                {
+                    return Problem(400, "An error occurred in the GetGameAsync method: " + $"Game with id {id} not found.");
+                }
+                return game;
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
             }
         }
 
         public async Task<ActionResult> DeleteGameAsync(int id)
         {
+            if (id < 0)
+                return Problem(400, $"Validation error occurred in the DeleteGameAsync method: {id} is not valied");
+
             try
             {
                 await _gameRepository.DeleteAsync(id);
@@ -123,35 +138,28 @@ namespace Sense_Capital_XOGameApi.Services
             }
             catch (Exception ex)
             {
-                return Problem(500,
-                    "An error occurred while trying to delete a Game",
-                    ex.Message
-                    );
+                return Problem(500, "An error occurred in the DeleteGameAsync method: " + ex.Message);
             }
         }
 
-        public async Task<ActionResult<Game>> MakeMove(RqstMakeMove rqstMakeMove)
+        public async Task<ActionResult<Game>> MakeMoveAsync(RqstMakeMove rqstMakeMove)
         {
+            var validationResult = await _rqstMakeMoveValidator.ValidateAsync(rqstMakeMove);
+            if (!validationResult.IsValid)
+                return Problem(400, "Validation error occurred in the MakeMove method: " + validationResult.ToString(", "));
+
             try
             {
                 // Поиск игры по id
-                var game = await _gameRepository.GetGameAsync(rqstMakeMove.GameId);
+                var game = await _gameRepository.GetGameByIdAsync(rqstMakeMove.GameId);
+
                 // Проверка наличия игры в бд
-                if (game==null)
-                {
-                    return Problem(400,
-                       "The game does not exist",
-                       "Requested id: " + rqstMakeMove.GameId
-                       );
-                }
+                if (game == null)
+                    return Problem(400, $"The game does not exist. Requested id: {rqstMakeMove.GameId}");
+
                 // Проверка закончена игра или нет
                 if (game.WinnerId != null)
-                {
-                    return Problem(400,
-                        "The game is already finished.",
-                        "Winner Id: " + game.WinnerId
-                        );
-                }
+                    return Problem(400, $"The game is already finished. Winner Id: {game.WinnerId}");
 
                 // Проверка правильный ли игрок ходит
                 if (game.CurrentPlayerId != rqstMakeMove.PlayerId)
@@ -159,30 +167,18 @@ namespace Sense_Capital_XOGameApi.Services
                     // Проверка существует ли игрок
                     bool isPlayerExist = await _playerRepository.isPlayerExist(rqstMakeMove.PlayerId);
                     if (!isPlayerExist)
-                    {
-                        return Problem(400,
-                           "The player does not exist",
-                           "Requested Player Id: " + rqstMakeMove.PlayerId);
-                    }
+                        return Problem(400, $"The player does not exist. Requested Player Id: {rqstMakeMove.PlayerId}");
 
-                    return Problem(400, 
-                        "It's not your turn.", 
-                        "Current Player Id: " + game.CurrentPlayerId);
+                    return Problem(400, $"It's not your turn. Current Player Id: {game.CurrentPlayerId}");
                 }
 
-                // Проверка возможности хода
+                // Проверка ход в пределах поля
                 if (rqstMakeMove.Row < 0 || rqstMakeMove.Row > 2 || rqstMakeMove.Column < 0 || rqstMakeMove.Column > 2)
-                {
-                    return Problem(400,
-                        "Invalid move.",
-                        "Move out of bounds");
-                }
+                    return Problem(400, "Invalid move. Move out of bounds");
+
+                // Проверка ячейка сводобна
                 if (game.BoardState[rqstMakeMove.Row * 3 + rqstMakeMove.Column] != '-')
-                {
-                    return Problem(400,
-                        "This cell is already occupied.",
-                        "Try another cell");
-                }
+                    return Problem(400, "This cell is already occupied.");
 
                 // Заполнение ячейки
                 var playerSymbol = rqstMakeMove.PlayerId == game.Players[0].Id ? game.Player1Symbol : game.Player2Symbol;
@@ -196,13 +192,14 @@ namespace Sense_Capital_XOGameApi.Services
                 {
                     game.WinnerId = result == "Draw" ? null : rqstMakeMove.PlayerId;
                 }
+
+                // Переключение игрока
                 else
                 {
-                    // Переключение игрока
                     game.CurrentPlayerId = game.Players[0].Id == rqstMakeMove.PlayerId ? game.Players[1].Id : game.Players[0].Id;
                 }
 
-                // Добавляем Game в Move и сохраняем все в бд
+                // Создаем move в бд
                 var move = new Move
                 {
                     Row = rqstMakeMove.Row,
@@ -216,7 +213,7 @@ namespace Sense_Capital_XOGameApi.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return Problem(500, "An error occurred in the MakeMoveAsync method: " + ex.Message);
             }
         }
 
@@ -278,12 +275,12 @@ namespace Sense_Capital_XOGameApi.Services
             return "Draw";
         }
 
-        private ObjectResult Problem(int status, string title, string detail)
+        private ObjectResult Problem(int status, string detail)
         {
             var problemDetails = new ProblemDetails
             {
                 Status = status,
-                Title = title,
+                Title = "GameService API:",
                 Detail = detail
             };
 
