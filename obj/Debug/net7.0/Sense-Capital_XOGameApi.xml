@@ -20,22 +20,8 @@
             
              </remarks>
              <response code="201">Returns the newly created a game object</response>
-             <response code="400">If the arguments are not correct</response>
-             <response code="500">if there was an internal server error.</response>
-        </member>
-        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.GetGameAsync(System.Int32)">
-             <summary>
-             Get a game by id
-             </summary>
-             <returns> A game by its ID</returns>
-             <remarks>
-             Sample request:
-            
-                 GET: api/Game/{id}
-            
-             </remarks>
-             <response code="200">If the request was successful and at least one Game is returned.</response>
-             <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
+             <response code="400">If the request are not correct</response>
+             <response code="500">If there was an internal server error.</response>
         </member>
         <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.GetAllGamesAsync">
              <summary>
@@ -52,6 +38,34 @@
              <response code="204">If the request was successful but the Game list is empty (contains no items).</response>
              <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
              <response code="500">if there was an internal server error.</response>
+        </member>
+        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.DeleteAllGamesAsync">
+             <summary>
+             Delete all Games
+             </summary>
+             <returns>Empty body, 204 response</returns>
+             <remarks>
+             Sample request:
+            
+                 Delete: api/Game
+                 
+             </remarks>
+             <response code="204">If the request was successful.</response>
+             <response code="500">if there was an internal server error.</response>
+        </member>
+        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.GetGameAsync(System.Int32)">
+             <summary>
+             Get a game by id
+             </summary>
+             <returns> A game by its ID</returns>
+             <remarks>
+             Sample request:
+            
+                 GET: api/Game/{id}
+            
+             </remarks>
+             <response code="200">If the request was successful and at least one Game is returned.</response>
+             <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
         </member>
         <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.DeleteGameAsync(System.Int32)">
              <summary>

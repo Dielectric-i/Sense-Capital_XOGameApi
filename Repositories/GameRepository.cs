@@ -38,6 +38,41 @@ namespace Sense_Capital_XOGameApi.Repositories
             }
         }
 
+        // Get all games
+        public async Task<IEnumerable<Game>> GetAllGamesAsync()
+        {
+            try
+            {
+                var games = await _context.Games
+                                .Include(g => g.Players)
+                                .Include(g => g.Moves)
+                                .ToListAsync();
+                return games;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Repository API: Error getting list of all games: " + ex.Message);
+            }
+        }
+
+        // Delete all games
+        public async Task DeleteAllGamesAsync()
+        {
+            try
+            {
+                var allGames = await _context.Games.ToListAsync();
+                _context.Games.RemoveRange(allGames);
+                // await _context.Games.ExecuteDeleteAsync(); // этот метод генерирует неправильный SQL запрос
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Repository API: Error delete all games: " + ex.Message);
+            }
+        }
+
         // Get game by id
         public async Task<Game> GetGameByIdAsync(int id)
         {
@@ -58,22 +93,7 @@ namespace Sense_Capital_XOGameApi.Repositories
             }
         }
 
-        // Get all games
-        public async Task<IEnumerable<Game>> GetAllGamesAsync()
-        {
-            try
-            {
-                var games = await _context.Games.ToListAsync();
-                return games;
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception("Repository API: Error getting list of all games: " + ex.Message);
-            }
-        }
-
-        //Delete game by Id
+        // Delete game by Id
         public async Task DeleteAsync(int id)
         {
             if (id <= 0 || id == null)
@@ -92,6 +112,7 @@ namespace Sense_Capital_XOGameApi.Repositories
             }
         }
 
+        // Update game
         public async Task<Game> UpdateGameAsync(Game game)
         {
             var validationResult = await _gameInitialStateValidator.ValidateAsync(game);

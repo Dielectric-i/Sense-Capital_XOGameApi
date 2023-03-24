@@ -75,6 +75,37 @@ namespace Sense_Capital_XOGameApi.Services
             }
         }
 
+        public async Task<ActionResult> DeleteAllGamesAsync()
+        {
+            try
+            {
+                await _gameRepository.DeleteAllGamesAsync();
+                return new NoContentResult();
+
+
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
+            }
+        }
+
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync()
+        {
+            try
+            {
+                var games = await _gameRepository.GetAllGamesAsync();
+                if (games.Count() == 0)
+                    return new NoContentResult();
+
+                return new OkObjectResult(games);
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
+            }
+        }
+
         public async Task<ActionResult<Game>> GetGameAsync(int id)
         {
             if (id < 0)
@@ -92,22 +123,6 @@ namespace Sense_Capital_XOGameApi.Services
             catch (Exception ex)
             {
                 return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
-            }
-        }
-
-        public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync()
-        {
-            try
-            {
-                var games = await _gameRepository.GetAllGamesAsync();
-                if (games.Count() == 0)
-                    return new NoContentResult();
-
-                return new OkObjectResult(games);
-            }
-            catch (Exception ex)
-            {
-                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
             }
         }
 

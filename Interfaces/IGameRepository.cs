@@ -1,4 +1,5 @@
-﻿using Sense_Capital_XOGameApi.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Sense_Capital_XOGameApi.Models;
 
 namespace Sense_Capital_XOGameApi.Interfaces
 {
@@ -7,11 +8,14 @@ namespace Sense_Capital_XOGameApi.Interfaces
         // Create new game
         Task<Game> CreateGameAsync(Game game);
         
-        // Get game by id
-        Task<Game> GetGameByIdAsync(int id);
-
         // Get all games
         Task<IEnumerable<Game>> GetAllGamesAsync();
+
+        // Delete all games
+        Task DeleteAllGamesAsync();
+
+        // Get game by id
+        Task<Game> GetGameByIdAsync(int id);
 
         //Delete game by Id
         Task DeleteAsync(int id);

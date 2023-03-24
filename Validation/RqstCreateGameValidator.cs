@@ -8,7 +8,7 @@ namespace Sense_Capital_XOGameApi.Validation
         public RqstCreateGameValidator()
         {
             RuleFor(rqst => rqst.P1Name).MaximumLength(50).MinimumLength(3);
-            RuleFor(rqst => rqst.P2Name).MaximumLength(50).MinimumLength(3);
+            RuleFor(rqst => rqst.P2Name).NotEqual(rqst => rqst.P1Name).MaximumLength(50).MinimumLength(3);
         }
     }
 }

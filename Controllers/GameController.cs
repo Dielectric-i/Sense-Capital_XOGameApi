@@ -25,6 +25,7 @@ namespace Sense_Capital_XOGameApi.Controllers
             _rqstMakeMoveValidator = rqstMakeMoveValidator;
         }
 
+
         /// <summary>
         /// Create new game
         /// </summary>
@@ -42,11 +43,11 @@ namespace Sense_Capital_XOGameApi.Controllers
         /// <response code="201">Returns the newly created a game object</response>
         /// <response code="400">If the request are not correct</response>
         /// <response code="500">If there was an internal server error.</response>
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [HttpPost]
-        public async Task<ActionResult<Game>> CreateGameAsync([FromBody] RqstCreateGame rqstCreateGame)
+        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame rqstCreateGame)
         {
             try
             {
@@ -64,37 +65,6 @@ namespace Sense_Capital_XOGameApi.Controllers
         }
 
         /// <summary>
-        /// Get a game by id
-        /// </summary>
-        /// <returns> A game by its ID</returns>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     GET: api/Game/{id}
-        ///
-        /// </remarks>
-        /// <response code="200">If the request was successful and at least one Game is returned.</response>
-        /// <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGameAsync(int id)
-        {
-            try
-            {
-                if (id < 0)
-                    return Problem(400, $"Validation error occurred in the GetGameAsync method: {id} is not valied");
-
-                return await _gameService.GetGameAsync(id);
-            }
-            catch (Exception ex)
-            {
-                return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Get all Games
         /// </summary>
         /// <returns>All Games</returns>
@@ -108,10 +78,10 @@ namespace Sense_Capital_XOGameApi.Controllers
         /// <response code="204">If the request was successful but the Game list is empty (contains no items).</response>
         /// <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
         /// <response code="500">if there was an internal server error.</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync()
         {
@@ -128,6 +98,64 @@ namespace Sense_Capital_XOGameApi.Controllers
             catch (Exception ex)
             {
                 return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Delete all Games
+        /// </summary>
+        /// <returns>Empty body, 204 response</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Delete: api/Game
+        ///     
+        /// </remarks>
+        /// <response code="204">If the request was successful.</response>
+        /// <response code="500">if there was an internal server error.</response>
+        [ProducesResponseType(204)]
+        [ProducesResponseType(500)]
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAllGamesAsync()
+        {
+            try
+            {
+                return await _gameService.DeleteAllGamesAsync();
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the DeleteAllGamesAsync method: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get a game by id
+        /// </summary>
+        /// <returns> A game by its ID</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET: api/Game/{id}
+        ///
+        /// </remarks>
+        /// <response code="200">If the request was successful and at least one Game is returned.</response>
+        /// <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Game>> GetGameAsync(int id)
+        {
+            try
+            {
+                if (id < 0)
+                    return Problem(400, $"Validation error occurred in the GetGameAsync method: {id} is not valied");
+
+                return await _gameService.GetGameAsync(id);
+            }
+            catch (Exception ex)
+            {
+                return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
             }
         }
 
@@ -152,8 +180,7 @@ namespace Sense_Capital_XOGameApi.Controllers
                 if (id < 0)
                     return Problem(400, $"Validation error occurred in the DeleteGameAsync method: {id} is not valied");
 
-                await _gameService.DeleteGameAsync(id);
-                return NoContent();
+                return await _gameService.DeleteGameAsync(id);
             }
             catch (Exception ex)
             {
@@ -169,11 +196,12 @@ namespace Sense_Capital_XOGameApi.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST: /api/Game/{id}/move
+        ///     POST: /api/Game/move
         ///     {
         ///     "row": 0,
         ///     "column": 0,
         ///     "playerId": 0,
+        ///     "gameId": 0
         ///     }
         ///
         /// </remarks>
@@ -184,10 +212,10 @@ namespace Sense_Capital_XOGameApi.Controllers
         /// <response code="204">If the request was successful but the Game list is empty (contains no items).</response>
         /// <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
         /// <response code="500">if there was an internal server error.</response>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [HttpPut("move")]
         public async Task<ActionResult<Game>> MakeMove(RqstMakeMove rqstMakeMove)
         {
