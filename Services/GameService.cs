@@ -37,13 +37,14 @@ namespace Sense_Capital_XOGameApi.Services
             var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
             if (!validationResult.IsValid)
             { //return Problem(statuscode: 400, details: validationResult.ToString(", "));
-                //var whatIs = new HttpContext();
-                var problemDetails = ProblemDetailsFactory.CreateProblemDetails(new HttpContext httpCpntext, 400, validationResult.ToString(", "));
-               // var problemDetails = ProblemDetailsFactory.CreateProblemDetails(httpContext: whatIs, statusCode: default, title: default, type: default, detail: default, instance: default);
-                return new ObjectResult(problemDetails)
+              //var whatIs = new HttpContext();
+              //var problemDetails = ProblemDetailsFactory.CreateProblemDetails(new HttpContext httpCpntext, 400, validationResult.ToString(", "));
+              // var problemDetails = ProblemDetailsFactory.CreateProblemDetails(httpContext: whatIs, statusCode: default, title: default, type: default, detail: default, instance: default);
+                /*return new ObjectResult(problemDetails)
                 {
                     StatusCode = problemDetails.Status
-                };
+                };*/
+                throw new Exception("Oppsss GameService->CreateGameAsync");
             }
             try
             {
