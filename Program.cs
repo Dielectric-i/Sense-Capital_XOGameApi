@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Data;
 using Sense_Capital_XOGameApi.Interfaces;
+using Sense_Capital_XOGameApi.Middlewares;
 using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.Repositories;
 using Sense_Capital_XOGameApi.RequestModels;
@@ -67,6 +68,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
