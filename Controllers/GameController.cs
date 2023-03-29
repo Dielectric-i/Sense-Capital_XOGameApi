@@ -47,20 +47,19 @@ namespace Sense_Capital_XOGameApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost]
-        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame rqstCreateGame)
+        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame? rqstCreateGame)
         {
             try
             {
                 var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
                 if (!validationResult.IsValid)
-                    return Problem(400, "Validation error occurred in the CreateGameAsync method: " + validationResult.ToString(", "));
-
-                var game = await _gameService.CreateGameAsync(rqstCreateGame);
-                return game;
+                    return Problem( statusCode: 422, detail: validationResult.ToString(", "));
+                
+                return await _gameService.CreateGameAsync(rqstCreateGame);
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the CreateGameAsync method: " + ex.Message);
+                return Problem( statusCode: 500, detail: ex.Message);
             }
         }
 
@@ -97,7 +96,7 @@ namespace Sense_Capital_XOGameApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the GetAllGamesAsync method: " + ex.Message);
+                return Problem(statusCode: 500, detail: ex.Message);
             }
         }
 
@@ -124,7 +123,7 @@ namespace Sense_Capital_XOGameApi.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the DeleteAllGamesAsync method: " + ex.Message);
+                return Problem(statusCode: 500, detail: ex.Message);
             }
         }
 
@@ -144,23 +143,23 @@ namespace Sense_Capital_XOGameApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGameAsync(int id)
+        public async Task<ActionResult<Game>> GetGameByIdAsync(int id)
         {
             try
             {
                 if (id < 0)
-                    return Problem(400, $"Validation error occurred in the GetGameAsync method: {id} is not valied");
+                    return Problem(statusCode: 422, detail: $"id: {id} is not valid");
 
                 return await _gameService.GetGameAsync(id);
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the GetGameAsync method: " + ex.Message);
+                return Problem(statusCode: 500, detail: ex.Message);
             }
         }
 
         /// <summary>
-        /// Delete an Game by Id
+        /// Delete a Game by Id
         /// </summary>
         /// <returns>All Games</returns>
         /// <remarks>
@@ -173,20 +172,19 @@ namespace Sense_Capital_XOGameApi.Controllers
         /// <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
         /// <response code="500">if there was an internal server error.</response>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGameAsync(int id)
+        public async Task<IActionResult> DeleteGameByIdAsync(int id)
         {
             try
             {
                 if (id < 0)
-                    return Problem(400, $"Validation error occurred in the DeleteGameAsync method: {id} is not valied");
+                    return Problem(statusCode: 422, detail: $"id: {id} is not valid");
 
                 return await _gameService.DeleteGameAsync(id);
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the DeleteGameAsync method: " + ex.Message);
+                return Problem(statusCode: 500, detail: ex.Message);
             }
-
         }
 
         /// <summary>
@@ -223,36 +221,14 @@ namespace Sense_Capital_XOGameApi.Controllers
             {
                 var validationResult = await _rqstMakeMoveValidator.ValidateAsync(rqstMakeMove);
                 if (!validationResult.IsValid)
-                    return Problem(400, "Validation error occurred in the MakeMove method: " + validationResult.ToString(", "));
+                    return Problem(statusCode: 422, detail: validationResult.ToString(", "));
 
                 return await _gameService.MakeMoveAsync(rqstMakeMove);
             }
             catch (Exception ex)
             {
-                return Problem(500, "An error occurred in the MakeMoveAsync method: " + ex.Message);
+                return Problem(statusCode: 500, detail: ex.Message);
             }
-        }
-
-        //
-        private ObjectResult Problem(int status, string detail)
-        {
-            try
-            {
-                var problemDetails = new ProblemDetails
-                {
-                    Status = status,
-                    Title = "GameController API:",
-                    Detail = detail
-                };
-
-                return new ObjectResult(problemDetails);
-            }
-            catch (Exception ex)
-            {
-
-                return Problem(500, "An error occurred in the Problem method: " + ex.Message);
-            }
-
         }
     }
 }

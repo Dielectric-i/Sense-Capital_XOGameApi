@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sense_Capital_XOGameApi.Data;
 using Sense_Capital_XOGameApi.Interfaces;
@@ -20,12 +20,13 @@ namespace Sense_Capital_XOGameApi.Repositories
         // Create new game
         public async Task<Game> CreateGameAsync(Game game)
         {
-            var validationResult = await _gameInitialStateValidator.ValidateAsync(game);
-            if (!validationResult.IsValid)
-                throw new Exception("GameRepository API: The 'game' parameter is not valid: " + validationResult.ToString(", "));
-
             try
             {
+                var validationResult = await _gameInitialStateValidator.ValidateAsync(game);
+                if (!validationResult.IsValid)
+                    throw new Exception("The 'game' parameter is not valid: " + validationResult.ToString(", "));
+
+
                 await _context.Games.AddAsync(game);
                 await _context.SaveChangesAsync();
                 game = await GetGameByIdAsync(game.Id);
@@ -34,7 +35,7 @@ namespace Sense_Capital_XOGameApi.Repositories
             catch (Exception ex)
             {
                 //Something went wrong while creating the game.
-                throw new Exception("GameRepository API: Error adding gamе: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the CreateGameAsync method: " + ex.Message);
             }
         }
 
@@ -52,7 +53,7 @@ namespace Sense_Capital_XOGameApi.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception("Repository API: Error getting list of all games: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the GetAllGamesAsync method: " + ex.Message);
             }
         }
 
@@ -69,38 +70,42 @@ namespace Sense_Capital_XOGameApi.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception("Repository API: Error delete all games: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the DeleteAllGamesAsync method: " + ex.Message);
             }
         }
 
         // Get game by id
         public async Task<Game> GetGameByIdAsync(int id)
         {
-            if (id <= 0 )
-                throw new ArgumentException($"GameRepository API: Invalid game id: {id}");
-
             try
             {
+                if (id <= 0)
+                    throw new ArgumentException($"Invalid game id: {id}");
+
+
                 var game = await _context.Games
                                 .Include(g => g.Players)
                                 .Include(g => g.Moves)
                                 .FirstOrDefaultAsync(g => g.Id == id);
+                
+                throw new Exception("Ooops!");
+
                 return game;
             }
             catch (Exception ex)
             {
-                throw new Exception("GameRepository API: Error getting game by id: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the GetGameByIdAsync method: " + ex.Message);
             }
         }
 
         // Delete game by Id
         public async Task DeleteAsync(int id)
         {
-            if (id <= 0 || id == null)
-                throw new ArgumentException($"GameRepository API: Invalid game id: {id}");
-
             try
             {
+                if (id <= 0)
+                    throw new ArgumentException($"Invalid game id: {id}");
+
                 var game = await GetGameByIdAsync(id);
                 _context.Games.Remove(game);
                 await _context.SaveChangesAsync();
@@ -108,27 +113,28 @@ namespace Sense_Capital_XOGameApi.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception("GameRepository API: Error deleting game by id: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the DeleteAsync method: " + ex.Message);
             }
         }
 
         // Update game
         public async Task<Game> UpdateGameAsync(Game game)
         {
-            var validationResult = await _gameInitialStateValidator.ValidateAsync(game);
-            if (!validationResult.IsValid)
-                throw new Exception("GameRepository API: The game parameter is not valid: " + validationResult.ToString(", "));
-
             try
             {
+                var validationResult = await _gameInitialStateValidator.ValidateAsync(game);
+                if (!validationResult.IsValid)
+                    throw new ArgumentException("The 'game' parameter is not valid: " + validationResult.ToString(", "));
+
+
                 _context.Games.Update(game);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return game;
             }
             catch (Exception ex)
             {
 
-                throw new Exception("GameRepository API: Error updating game by id: " + ex.Message);
+                throw new Exception("GameRepository API: An error occurred in the UpdateGameAsync method: " + ex.Message);
             }
         }
     }

@@ -24,12 +24,17 @@ builder.Services.AddDbContext<ApiContext>(options => options.UseMySQL(
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IMoveRepository, MoveRepository>();
+
+// Services
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 // FluentValidation
 builder.Services.AddScoped<IValidator<Player>, PlayerValidator>();
+//builder.Services.AddScoped<IValidator<Player>, PlayerValidations>();
 builder.Services.AddScoped<IValidator<RqstCreateGame>, RqstCreateGameValidator>();
 builder.Services.AddScoped<IValidator<RqstMakeMove>, RqstMoveValidator>();
+builder.Services.AddScoped<IValidator<RqstCreatePlayer>, RqstCreatePlayerValidator>();
 builder.Services.AddScoped<IValidator<Game>, GameInitialStateValidator>();
 
 

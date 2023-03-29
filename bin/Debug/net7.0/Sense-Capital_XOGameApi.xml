@@ -53,7 +53,7 @@
              <response code="204">If the request was successful.</response>
              <response code="500">if there was an internal server error.</response>
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.GetGameAsync(System.Int32)">
+        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.GetGameByIdAsync(System.Int32)">
              <summary>
              Get a game by id
              </summary>
@@ -67,9 +67,9 @@
              <response code="200">If the request was successful and at least one Game is returned.</response>
              <response code="400">If there was an error while processing the request. In this case, the error message will be included in the response body.</response>
         </member>
-        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.DeleteGameAsync(System.Int32)">
+        <member name="M:Sense_Capital_XOGameApi.Controllers.GameController.DeleteGameByIdAsync(System.Int32)">
              <summary>
-             Delete an Game by Id
+             Delete a Game by Id
              </summary>
              <returns>All Games</returns>
              <remarks>
@@ -90,11 +90,12 @@
              <remarks>
              Sample request:
             
-                 POST: /api/Game/{id}/move
+                 POST: /api/Game/move
                  {
                  "row": 0,
                  "column": 0,
                  "playerId": 0,
+                 "gameId": 0
                  }
             
              </remarks>
