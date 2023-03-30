@@ -9,7 +9,7 @@ namespace Sense_Capital_XOGameApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    //[ErrorHandlingFilter] // Указал в Program.cs в  b
+    //[ErrorHandlingFilter] // Указал в Program.cs uilder.Services.AddControllers(option => option.Filters.Add<ErrorHandlingFilterAttribute>());
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
