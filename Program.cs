@@ -14,9 +14,10 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//builder.Services.AddControllers(option => option.Filters.Add<ErrorHandlingFilterAttribute>());
+builder.Services.AddControllers();
 
-builder.Services.AddControllers(option => option.Filters.Add<ErrorHandlingFilterAttribute>());
+
 builder.Services.AddDbContext<ApiContext>(options => options.UseMySQL(
     builder.Configuration.GetConnectionString("DefoultConnection")
     ));
@@ -70,6 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseMiddleware<ErrorHandlingMiddleware>();
+
+app.UseExceptionHandler("/error");
 
 app.UseHttpsRedirection();
 
