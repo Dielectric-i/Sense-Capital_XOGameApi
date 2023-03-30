@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Data;
+using Sense_Capital_XOGameApi.Filters;
 using Sense_Capital_XOGameApi.Interfaces;
-using Sense_Capital_XOGameApi.Middlewares;
 using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.Repositories;
 using Sense_Capital_XOGameApi.RequestModels;
@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(option => option.Filters.Add<ErrorHandlingFilterAttribute>());
 builder.Services.AddDbContext<ApiContext>(options => options.UseMySQL(
     builder.Configuration.GetConnectionString("DefoultConnection")
     ));
@@ -69,7 +69,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ErrorHandlingMiddleware>();
+//app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

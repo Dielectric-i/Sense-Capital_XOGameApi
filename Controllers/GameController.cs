@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Sense_Capital_XOGameApi.Filters;
 using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.RequestModels;
 
@@ -8,6 +9,7 @@ namespace Sense_Capital_XOGameApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
+    //[ErrorHandlingFilter] // Указал в Program.cs в  b
     public class GameController : ControllerBase
     {
         private readonly IGameService _gameService;
