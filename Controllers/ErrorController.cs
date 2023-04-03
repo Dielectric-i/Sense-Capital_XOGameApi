@@ -9,6 +9,7 @@ namespace Sense_Capital_XOGameApi.Controllers
         [Route("/error")]
         public IActionResult Errors()
         {
+
             Exception? exception = HttpContext.Features.Get<IExceptionHandlerFeature>().Error;
             return Problem(title: exception?.Message, statusCode:400) ;
         }
