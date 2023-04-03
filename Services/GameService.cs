@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Sense_Capital_XOGameApi.Common.Errors;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Interfaces;
 using Sense_Capital_XOGameApi.Models;
@@ -44,7 +45,7 @@ namespace Sense_Capital_XOGameApi.Services
                 {
                     StatusCode = problemDetails.Status
                 };*/
-                throw new Exception("Oppsss GameService->CreateGameAsync");
+                throw new RequestNotValidException();
             }
             try
             {
