@@ -9,19 +9,14 @@ namespace Sense_Capital_XOGameApi.Controllers
         [Route("/error")]
         public IActionResult Errors()
         {
-
             Exception? exception = HttpContext.Features.Get<IExceptionHandlerFeature>().Error;
-
-
-
-
+            
             var (statusCode, message) = exception switch
             {
                 IServiceException serviceException => ((int)serviceException.StatusCode, serviceException.ErrorMessage),
-                //RequestNotValidException _ => (StatusCodes.Status422UnprocessableEntity , "422 message"),
+                
                 _ => (StatusCodes.Status500InternalServerError, "Oops, scode500"),
             };
-            //return Problem(statusCode: statusCode, title:message);
             return Problem(statusCode: statusCode, title: message);
         }
     }
