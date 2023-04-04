@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using OneOf;
 using Sense_Capital_XOGameApi.Common.Errors;
 using Sense_Capital_XOGameApi.Controllers;
 using Sense_Capital_XOGameApi.Interfaces;
@@ -33,22 +34,21 @@ namespace Sense_Capital_XOGameApi.Services
             _rqstMakeMoveValidator = rqstMakeMoveValidator;
         }
 
-        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame rqstCreateGame)
+        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> Test()
+        {
+
+            //return new Game();
+            return await GetGameAsync(5);
+        }
+
+        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> CreateGameAsync(RqstCreateGame rqstCreateGame)
         {
             var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
             if (!validationResult.IsValid)
-            { //return Problem(statuscode: 400, details: validationResult.ToString(", "));
-              //var whatIs = new HttpContext();
-              //var problemDetails = ProblemDetailsFactory.CreateProblemDetails(new HttpContext httpCpntext, 400, validationResult.ToString(", "));
-              // var problemDetails = ProblemDetailsFactory.CreateProblemDetails(httpContext: whatIs, statusCode: default, title: default, type: default, detail: default, instance: default);
-                /*return new ObjectResult(problemDetails)
-                {
-                    StatusCode = problemDetails.Status
-                };*/
-                throw new RequestNotValidException();
-            }
-            try
             {
+
+                return new RequestNotValidException();
+            }
                 // Пробуем искать переданное имя в бд
                 var player1 = await _playerRepository.GetPlayerByNameAsync(rqstCreateGame.P1Name);
 
@@ -73,17 +73,11 @@ namespace Sense_Capital_XOGameApi.Services
                     Players = new List<Player>() { player1, player2 },
                     CurrentPlayerId = player1.Id
                 };
-
                 var game = await _gameRepository.CreateGameAsync(newGame);
 
 
-                return new CreatedResult($"api/Game/{newGame.Id}", game);
-
-            }
-            catch (Exception ex)
-            {
-                return PrivateProblem(500, ex.Message);
-            }
+                //return new CreatedResult($"api/Game/{newGame.Id}", game);
+                return await GetGameAsync(5);
         }
 
         public async Task<ActionResult> DeleteAllGamesAsync()
@@ -286,6 +280,7 @@ namespace Sense_Capital_XOGameApi.Services
             // It's a Draw
             return "Draw";
         }
+
         private ObjectResult PrivateProblem(int status, string detail)
         {
             var problemDetails = new ProblemDetails
@@ -297,5 +292,6 @@ namespace Sense_Capital_XOGameApi.Services
 
             return new ObjectResult(problemDetails);
         }
+
     }
 }

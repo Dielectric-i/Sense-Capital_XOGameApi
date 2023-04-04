@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "uw5Wwt5ze8DrXOw/u6nHN+GDofGlqAlCkyZUdRfLoAGcvwoqQzSUKVxFOjH7G7z9UCfBR2o2Mu6+iDgzlqKBcQ==",
+  "dgSpecHash": "8r17p/tQqSBZ+Ooao84jobkcvubf8/cJ6HZbOOeSlZrK7NdS3HJZxmU47wJ2PLI4OYXEMC0PAZUBr/YhcB8+0Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\ruesinc\\source\\repos\\Sense-Capital_XOGameApi\\Sense-Capital_XOGameApi.csproj",
   "expectedPackageFiles": [
@@ -42,6 +42,7 @@
     "C:\\Users\\ruesinc\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\ruesinc\\.nuget\\packages\\newtonsoft.json\\10.0.1\\newtonsoft.json.10.0.1.nupkg.sha512",
     "C:\\Users\\ruesinc\\.nuget\\packages\\newtonsoft.json.bson\\1.0.1\\newtonsoft.json.bson.1.0.1.nupkg.sha512",
+    "C:\\Users\\ruesinc\\.nuget\\packages\\oneof\\3.0.243\\oneof.3.0.243.nupkg.sha512",
     "C:\\Users\\ruesinc\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
     "C:\\Users\\ruesinc\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\ruesinc\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

@@ -707,6 +707,15 @@
           }
         }
       },
+      "OneOf/3.0.243": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/OneOf.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/OneOf.dll": {}
+        }
+      },
       "Portable.BouncyCastle/1.9.0": {
         "type": "package",
         "compile": {
@@ -3561,6 +3570,21 @@
         "lib/netstandard1.3/Newtonsoft.Json.Bson.xml",
         "newtonsoft.json.bson.1.0.1.nupkg.sha512",
         "newtonsoft.json.bson.nuspec"
+      ]
+    },
+    "OneOf/3.0.243": {
+      "sha512": "7zbyWxAbh0FZTVTpfqd8lIo9ejgoxPuadZgYTZLCq8aCtLQ5biQZ8gv61hpCbi/XuII0JlqfOTfocvv4wu8Xdw==",
+      "type": "package",
+      "path": "oneof/3.0.243",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/OneOf.dll",
+        "lib/net45/OneOf.dll",
+        "lib/netstandard1.3/OneOf.dll",
+        "lib/netstandard2.0/OneOf.dll",
+        "oneof.3.0.243.nupkg.sha512",
+        "oneof.nuspec"
       ]
     },
     "Portable.BouncyCastle/1.9.0": {
@@ -7854,6 +7878,7 @@
       "Microsoft.AspNetCore.OpenApi >= 7.0.4",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.4",
       "MySql.EntityFrameworkCore >= 7.0.0",
+      "OneOf >= 3.0.243",
       "Swashbuckle.AspNetCore >= 6.5.0",
       "Swashbuckle.AspNetCore.ReDoc >= 6.5.0"
     ]
@@ -7923,6 +7948,10 @@
           "MySql.EntityFrameworkCore": {
             "target": "Package",
             "version": "[7.0.0, )"
+          },
+          "OneOf": {
+            "target": "Package",
+            "version": "[3.0.243, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

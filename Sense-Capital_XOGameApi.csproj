@@ -21,6 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="OneOf" Version="3.0.243" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="6.5.0" />
   </ItemGroup>

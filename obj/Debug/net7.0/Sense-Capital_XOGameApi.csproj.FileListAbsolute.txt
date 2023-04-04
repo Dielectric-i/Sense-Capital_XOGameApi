@@ -71,3 +71,4 @@ C:\Users\ruesinc\source\repos\Sense-Capital_XOGameApi\bin\Debug\net7.0\System.Ne
 C:\Users\ruesinc\source\repos\Sense-Capital_XOGameApi\bin\Debug\net7.0\System.Web.Http.dll
 C:\Users\ruesinc\source\repos\Sense-Capital_XOGameApi\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Users\ruesinc\source\repos\Sense-Capital_XOGameApi\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+C:\Users\ruesinc\source\repos\Sense-Capital_XOGameApi\bin\Debug\net7.0\OneOf.dll

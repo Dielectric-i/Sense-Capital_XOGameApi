@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using OneOf;
+using Sense_Capital_XOGameApi.Common.Errors;
 using Sense_Capital_XOGameApi.Filters;
 using Sense_Capital_XOGameApi.Models;
 using Sense_Capital_XOGameApi.RequestModels;
@@ -49,7 +51,7 @@ namespace Sense_Capital_XOGameApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost]
-        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame? rqstCreateGame)
+        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> CreateGameAsync(RqstCreateGame? rqstCreateGame)
         {
                 var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
                // if (!validationResult.IsValid)
@@ -57,7 +59,7 @@ namespace Sense_Capital_XOGameApi.Controllers
                 
                 return await _gameService.CreateGameAsync(rqstCreateGame);
         }
-
+       
         /// <summary>
         /// Get all Games
         /// </summary>
