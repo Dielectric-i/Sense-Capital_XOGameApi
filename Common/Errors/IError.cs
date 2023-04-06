@@ -2,7 +2,7 @@
 
 namespace Sense_Capital_XOGameApi.Common.Errors
 {
-    public interface IServiceException
+    public interface IError
     {
         public HttpStatusCode StatusCode { get; }
         public string ErrorMessage { get; }

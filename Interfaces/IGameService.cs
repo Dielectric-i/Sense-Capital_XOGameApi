@@ -8,8 +8,8 @@ namespace Sense_Capital_XOGameApi.Controllers
 {
     public interface IGameService
     {
-        Task<OneOf<ActionResult<Game>, RequestNotValidException>> Test();
-        Task<OneOf<ActionResult<Game>, RequestNotValidException>> CreateGameAsync(RqstCreateGame rqstCreateGame);
+        Task<ActionResult<Game>> Test();
+        Task<OneOf<Game, IError>> CreateGameAsync(RqstCreateGame rqstCreateGame);
         Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync();
         Task<ActionResult> DeleteAllGamesAsync();
         Task<ActionResult<Game>> GetGameAsync(int id);

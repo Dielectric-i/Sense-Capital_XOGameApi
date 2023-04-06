@@ -13,7 +13,7 @@ namespace Sense_Capital_XOGameApi.Controllers
             
             var (statusCode, message) = exception switch
             {
-                IServiceException serviceException => ((int)serviceException.StatusCode, serviceException.ErrorMessage),
+                IError serviceException => ((int)serviceException.StatusCode, serviceException.ErrorMessage),
                 
                 _ => (StatusCodes.Status500InternalServerError, "Oops, scode500"),
             };

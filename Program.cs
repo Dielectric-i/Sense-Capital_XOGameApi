@@ -72,7 +72,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.UseExceptionHandler("/error");
+//app.UseExceptionHandler("/error");
 
 app.UseHttpsRedirection();
 

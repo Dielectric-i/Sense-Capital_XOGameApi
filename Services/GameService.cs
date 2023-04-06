@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OneOf;
 using Sense_Capital_XOGameApi.Common.Errors;
 using Sense_Capital_XOGameApi.Controllers;
@@ -34,50 +33,46 @@ namespace Sense_Capital_XOGameApi.Services
             _rqstMakeMoveValidator = rqstMakeMoveValidator;
         }
 
-        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> Test()
+        public async Task<ActionResult<Game>> Test()
         {
+            var game = new Game();
 
-            //return new Game();
-            return await GetGameAsync(5);
+            return new OkObjectResult(game);
         }
 
-        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> CreateGameAsync(RqstCreateGame rqstCreateGame)
+        public async Task<OneOf<Game, IError>> CreateGameAsync(RqstCreateGame rqstCreateGame)
         {
+            //---------------------------------------------------------------------------------
             var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
             if (!validationResult.IsValid)
+                return new CreateGameServiceException(validationResult.ToString(" | "));
+            //---------------------------------------------------------------------------------
+
+            var player1 = new Player();
+            var player2 = new Player();
+
+            // Если не находится, тогда берем имя, которое было передано в запросе и создаем нового игрока
+            if (await _playerRepository.isPlayerExistByName(rqstCreateGame.P1Name))
             {
-
-                return new RequestNotValidException();
+                player1 = new Player { Name = rqstCreateGame.P1Name };
+                await _playerRepository.CreatePlayerAsync(player1);
             }
-                // Пробуем искать переданное имя в бд
-                var player1 = await _playerRepository.GetPlayerByNameAsync(rqstCreateGame.P1Name);
 
-                // Если не находится, тогда берем имя, которое было передано в запросе и создаем нового игрока
-                if (player1 == null)
-                {
-                    player1 = new Player { Name = rqstCreateGame.P1Name };
-                    await _playerRepository.CreatePlayerAsync(player1);
-                }
+            if (await _playerRepository.isPlayerExistByName(rqstCreateGame.P1Name))
+            {
+                player2.Name = rqstCreateGame.P2Name;
+                await _playerRepository.CreatePlayerAsync(player2);
+            }
 
-                var player2 = await _playerRepository.GetPlayerByNameAsync(rqstCreateGame.P2Name);
-                if (player2 == null)
-                {
-                    player2 = new Player();
-                    player2.Name = rqstCreateGame.P2Name;
-                    await _playerRepository.CreatePlayerAsync(player2);
-                }
+            // Создаем игру и сохраняем в бд
+            Game newGame = new Game()
+            {
+                Players = new List<Player>() { player1, player2 },
+                CurrentPlayerId = player1.Id
+            };
+            var game = await _gameRepository.CreateGameAsync(newGame);
 
-                // Создаем игру и сохраняем в бд
-                Game newGame = new Game()
-                {
-                    Players = new List<Player>() { player1, player2 },
-                    CurrentPlayerId = player1.Id
-                };
-                var game = await _gameRepository.CreateGameAsync(newGame);
-
-
-                //return new CreatedResult($"api/Game/{newGame.Id}", game);
-                return await GetGameAsync(5);
+            return game;
         }
 
         public async Task<ActionResult> DeleteAllGamesAsync()
@@ -115,7 +110,7 @@ namespace Sense_Capital_XOGameApi.Services
         {
             if (id < 0)
                 return PrivateProblem(400, $"{id} is not valid");
-                //return new BadRequest(rqstCreateGame);
+            //return new BadRequest(rqstCreateGame);
 
             try
             {

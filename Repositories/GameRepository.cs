@@ -87,8 +87,6 @@ namespace Sense_Capital_XOGameApi.Repositories
                                 .Include(g => g.Players)
                                 .Include(g => g.Moves)
                                 .FirstOrDefaultAsync(g => g.Id == id);
-                
-                throw new Exception("Ooops!");
 
                 return game;
             }

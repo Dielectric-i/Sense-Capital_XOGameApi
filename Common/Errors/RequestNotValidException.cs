@@ -2,5 +2,14 @@
 
 namespace Sense_Capital_XOGameApi.Common.Errors
 {
-    public record struct RequestNotValidException ();
+    public class CreateGameServiceException : IError
+    {
+        public HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
+
+        public string ErrorMessage { get; }
+        public CreateGameServiceException(string errorMessage)
+        {
+            ErrorMessage = errorMessage;
+        }
+    }
 }

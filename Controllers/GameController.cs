@@ -51,13 +51,20 @@ namespace Sense_Capital_XOGameApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [HttpPost]
-        public async Task<OneOf<ActionResult<Game>, RequestNotValidException>> CreateGameAsync(RqstCreateGame? rqstCreateGame)
+        public async Task<ActionResult<Game>> CreateGameAsync(RqstCreateGame? rqstCreateGame)
         {
-                var validationResult = await _rqstCreateGameValidator.ValidateAsync(rqstCreateGame);
-               // if (!validationResult.IsValid)
-                 //   return Problem( statusCode: 422, detail: validationResult.ToString(", "));
-                
-                return await _gameService.CreateGameAsync(rqstCreateGame);
+            OneOf<Game, IError> createGameServiceResult = await _gameService.CreateGameAsync(rqstCreateGame);
+
+            return createGameServiceResult.Match(
+                result=> Created($"api/Game/{result.Id}", result),
+                error=> Problem(statusCode: (int)error.StatusCode, title: error.ErrorMessage));
+            /*if (createGameServiceResult.IsT0)
+            {
+                var result = createGameServiceResult.AsT0;
+                return Created($"api/Game/{result.Id}", result);
+            }
+               
+            return Problem(statusCode: 400, title:"Damn!");*/
         }
        
         /// <summary>
